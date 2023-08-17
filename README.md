@@ -32,6 +32,14 @@
 $ npm install
 ```
 
+## Docker
+
+```bash
+$ docker-compose up -d
+
+$ npx prisma migrate dev
+```
+
 ## Running the app
 
 ```bash
