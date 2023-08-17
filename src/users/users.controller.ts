@@ -8,11 +8,17 @@ import {
   Delete,
   ParseIntPipe,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 
 @Controller('users')
@@ -24,6 +30,22 @@ export class UsersController {
   @ApiCreatedResponse({ type: UserEntity })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @ApiQuery({ name: 'skip', type: Number })
+  @ApiQuery({ name: 'take', type: Number })
+  @Get('pages')
+  @ApiOkResponse({ type: UserEntity, isArray: true })
+  async pagination(
+    @Query('skip', ParseIntPipe) skip: number,
+    @Query('take', ParseIntPipe) take: number,
+  ) {
+    try {
+      const users = await this.usersService.paginate(skip, take);
+      return users;
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   @Get()

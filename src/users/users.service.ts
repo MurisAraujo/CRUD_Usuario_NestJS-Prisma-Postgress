@@ -6,6 +6,20 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
+
+  async paginate(skip: number, take: number) {
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.usuario.findMany({
+        skip,
+        take,
+      }),
+      this.prisma.usuario.count(),
+    ]);
+
+    const totalPage = Math.ceil(total / take);
+
+    return { total, totalPage, users };
+  }
   create(createUserDto: CreateUserDto) {
     return this.prisma.usuario.create({ data: createUserDto });
   }
