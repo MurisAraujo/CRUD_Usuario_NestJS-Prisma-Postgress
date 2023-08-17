@@ -16,4 +16,11 @@ export class UserEntity implements Usuario {
 
   @ApiProperty()
   createdAt: Date;
+
+  constructor(user?: Partial<UserEntity>) {
+    this.codigo = user?.codigo;
+    this.firstName = user?.firstName;
+    this.lastName = user?.lastName;
+    this.createdAt = user?.createdAt;
+  }
 }
